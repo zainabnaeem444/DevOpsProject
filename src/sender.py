@@ -65,8 +65,14 @@ def update():
     return pollutions
 
 
+# Wait for receiver to be ready
+print(f"Waiting for receiver at {HOST}:{PORT}...")
+time.sleep(10)  # Give receiver time to start
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    print(f"Connecting to receiver at {HOST}:{PORT}...")
     s.connect((HOST, PORT))
+    print("Connected successfully!")
     while True:
         data = pickle.dumps(pollutions)
         s.sendall(data)

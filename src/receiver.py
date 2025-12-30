@@ -131,24 +131,42 @@ max_pollution = data_province_displayed["Pollution"].max()
 # Socket handler
 def client_handler(gui: Gui, state_id_list: list):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((HOST, PORT))
     s.listen()
-    conn, _ = s.accept()
+    
     while True:
-        if data := conn.recv(1024 * 1024):
-            pollutions = pickle.loads(data)
-            print(f"Data received: {pollutions[:5]}")
-            if hasattr(gui, "_server") and state_id_list:
-                invoke_callback(
-                    gui,
-                    state_id_list[0],
-                    update_pollutions,
-                    [pollutions],
-                )
-        else:
-            print("Connection closed")
-            break
-
+        try:
+            print(f"Waiting for sender connection on {HOST}:{PORT}...")
+            conn, addr = s.accept()
+            print(f"Connected to sender at {addr}")
+            
+            buffer = b""
+            while True:
+                chunk = conn.recv(4096)
+                if not chunk:
+                    print("Connection closed by sender")
+                    break
+                    
+                buffer += chunk
+                try:
+                    pollutions = pickle.loads(buffer)
+                    buffer = b""  # Clear buffer after successful unpickle
+                    print(f"Data received: {pollutions[:5]}")
+                    
+                    if hasattr(gui, "_server") and state_id_list:
+                        invoke_callback(
+                            gui,
+                            state_id_list[0],
+                            update_pollutions,
+                            [pollutions],
+                        )
+                except pickle.UnpicklingError:
+                    # Incomplete data, wait for more
+                    continue
+        except Exception as e:
+            print(f"Error in client_handler: {e}")
+            continue
 
 # Gui declaration
 state_id_list = []
@@ -216,4 +234,4 @@ t = Thread(
     ),
 )
 t.start()
-gui.run(run_browser=False)
+gui.run(run_browser=False, host="0.0.0.0", port=5000)
