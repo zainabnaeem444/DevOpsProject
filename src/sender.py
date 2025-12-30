@@ -5,9 +5,10 @@ import time
 import socket
 import pickle
 import numpy as np
+import os
 
-HOST = "127.0.0.1"
-PORT = 65432
+HOST = os.getenv("RECEIVER_HOST", "127.0.0.1")
+PORT = int(os.getenv("RECEIVER_PORT", 65432))
 
 init_lat = 49.247
 init_long = 1.377

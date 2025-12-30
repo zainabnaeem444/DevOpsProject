@@ -5,6 +5,8 @@ from threading import Thread
 from taipy.gui import Gui, State, invoke_callback, get_state_id
 import numpy as np
 import pandas as pd
+import os
+
 
 init_lat = 49.247
 init_long = 1.377
@@ -53,8 +55,8 @@ drone_data = pd.DataFrame(
     }
 )
 
-HOST = "127.0.0.1"
-PORT = 65432
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("SOCKET_PORT", 65432))
 
 layout_map = {
     "mapbox": {
