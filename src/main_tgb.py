@@ -1,4 +1,3 @@
-
 import math
 import time
 from taipy import Gui
@@ -170,7 +169,19 @@ config = {"scrollZoom": False, "displayModeBar": False}
 max_pollution = data_province_displayed["Pollution"].max()
 
 with tgb.Page() as page:
-    tgb.chart("{data_province_displayed}", type="densitymapbox", plot_config=config, options=options, lat="Latitude", lon="Longitude", layout=layout_map, z="Pollution", mode="markers", class_name="map", height="40vh")
+    tgb.chart(
+        "{data_province_displayed}",
+        type="densitymapbox",
+        plot_config=config,
+        options=options,
+        lat="Latitude",
+        lon="Longitude",
+        layout=layout_map,
+        z="Pollution",
+        mode="markers",
+        class_name="map",
+        height="40vh",
+    )
 
     with tgb.layout(columns="1 2 2"):
         with tgb.part(class_name="card"):
@@ -178,18 +189,43 @@ with tgb.Page() as page:
             tgb.html("br")
             tgb.html("br")
             tgb.html("br")
-            tgb.indicator(lambda data_province_displayed: int(data_province_displayed['Pollution'].max()), value=lambda data_province_displayed: int(data_province_displayed['Pollution'].max()), min=140, max=0)
+            tgb.indicator(
+                lambda data_province_displayed: int(
+                    data_province_displayed["Pollution"].max()
+                ),
+                value=lambda data_province_displayed: int(
+                    data_province_displayed["Pollution"].max()
+                ),
+                min=140,
+                max=0,
+            )
             tgb.html("br")
             tgb.html("br")
             tgb.text("**Average Measured AQI:**", mode="md")
             tgb.html("br")
             tgb.html("br")
             tgb.html("br")
-            tgb.indicator(lambda data_province_displayed: int(data_province_displayed['Pollution'].mean()), value=lambda data_province_displayed: int(data_province_displayed['Pollution'].mean()), min=140, max=0)
+            tgb.indicator(
+                lambda data_province_displayed: int(
+                    data_province_displayed["Pollution"].mean()
+                ),
+                value=lambda data_province_displayed: int(
+                    data_province_displayed["Pollution"].mean()
+                ),
+                min=140,
+                max=0,
+            )
         with tgb.part(class_name="card"):
             tgb.table("{drone_data}", show_all=True)
         with tgb.part(class_name="card"):
-            tgb.chart(lambda line_data : line_data[-30:], type="lines", x="Time", y="Max AQI", layout=layout_line, height="40vh")
+            tgb.chart(
+                lambda line_data: line_data[-30:],
+                type="lines",
+                x="Time",
+                y="Max AQI",
+                layout=layout_line,
+                height="40vh",
+            )
 
 
 Gui(page).run(use_reloader=True)
