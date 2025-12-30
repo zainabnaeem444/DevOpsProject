@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecometrics-config
+  namespace: ecometrics
+data:
+  # Receiver configuration
+  HOST: "0.0.0.0"
+  SOCKET_PORT: "65432"
+  
+  # Sender configuration
+  RECEIVER_HOST: "receiver-service"
+  RECEIVER_PORT: "65432"
+  
+  # Application settings
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
