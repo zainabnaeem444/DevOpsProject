@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: receiver
-        image: devopsproject-receiver:latest
-        imagePullPolicy: Never
+        image: zainabnaeem/ecometrics-receiver:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
           name: http

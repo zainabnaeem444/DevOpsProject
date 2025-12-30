@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
       - name: sender
-        image: devopsproject-sender:latest
-        imagePullPolicy: Never
+        image: zainabnaeem/ecometrics-sender:latest
+        imagePullPolicy: Always
         env:
         - name: RECEIVER_HOST
           valueFrom:
