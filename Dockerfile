@@ -15,7 +15,8 @@ WORKDIR /app
 
 # Install application dependencies.
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=100 -r requirements.txt
+
 
 # Copy the application source code.
 COPY src/ .

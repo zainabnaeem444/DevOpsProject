@@ -5,9 +5,10 @@ import time
 import socket
 import pickle
 import numpy as np
+import os
 
-HOST = "127.0.0.1"
-PORT = 65432
+HOST = os.getenv("RECEIVER_HOST", "127.0.0.1")
+PORT = int(os.getenv("RECEIVER_PORT", 65432))
 
 init_lat = 49.247
 init_long = 1.377
@@ -64,8 +65,14 @@ def update():
     return pollutions
 
 
+# Wait for receiver to be ready
+print(f"Waiting for receiver at {HOST}:{PORT}...")
+time.sleep(10)  # Give receiver time to start
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    print(f"Connecting to receiver at {HOST}:{PORT}...")
     s.connect((HOST, PORT))
+    print("Connected successfully!")
     while True:
         data = pickle.dumps(pollutions)
         s.sendall(data)

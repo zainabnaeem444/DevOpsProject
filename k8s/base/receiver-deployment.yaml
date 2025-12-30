@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receiver
+  namespace: ecometrics
+  labels:
+    app: receiver
+    component: dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: receiver
+  template:
+    metadata:
+      labels:
+        app: receiver
+        component: dashboard
+    spec:
+      containers:
+      - name: receiver
+        image: zainabnaeem/ecometrics-receiver:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP
+        - containerPort: 65432
+          name: socket
+          protocol: TCP
+        env:
+        - name: HOST
+          valueFrom:
+            configMapKeyRef:
+              name: ecometrics-config
+              key: HOST
+        - name: SOCKET_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ecometrics-config
+              key: SOCKET_PORT
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5

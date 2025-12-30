@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sender
+  namespace: ecometrics
+  labels:
+    app: sender
+    component: data-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sender
+  template:
+    metadata:
+      labels:
+        app: sender
+        component: data-generator
+    spec:
+      containers:
+      - name: sender
+        image: zainabnaeem/ecometrics-sender:latest
+        imagePullPolicy: Always
+        env:
+        - name: RECEIVER_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: ecometrics-config
+              key: RECEIVER_HOST
+        - name: RECEIVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ecometrics-config
+              key: RECEIVER_PORT
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

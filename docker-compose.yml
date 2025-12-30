@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.receiver
+    container_name: ecometrics-receiver
+    ports:
+      - "5000:5000"
+      - "65432:65432"
+    environment:
+      - HOST=0.0.0.0
+      - SOCKET_PORT=65432
+    networks:
+      - ecometrics-network
+    restart: unless-stopped
+
+  sender:
+    build:
+      context: .
+      dockerfile: Dockerfile.sender
+    container_name: ecometrics-sender
+    environment:
+      - RECEIVER_HOST=receiver
+      - RECEIVER_PORT=65432
+    depends_on:
+      - receiver
+    networks:
+      - ecometrics-network
+    restart: unless-stopped
+
+networks:
+  ecometrics-network:
+    driver: bridge
