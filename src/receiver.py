@@ -99,7 +99,7 @@ def pollution(lat: float, long: float):
     Returns:
         - pollution level
     """
-    global countdown
+
     return 80 * (0.5 + 0.5 * math.sin(countdown / 20)) * math.exp(
         -(0.8 * (lat - factory_lat) ** 2 + 0.2 * (long - factory_long) ** 2) / 0.00005
     ) + np.random.randint(0, 50)
@@ -134,26 +134,26 @@ def client_handler(gui: Gui, state_id_list: list):
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((HOST, PORT))
     s.listen()
-    
+
     while True:
         try:
             print(f"Waiting for sender connection on {HOST}:{PORT}...")
             conn, addr = s.accept()
             print(f"Connected to sender at {addr}")
-            
+
             buffer = b""
             while True:
                 chunk = conn.recv(4096)
                 if not chunk:
                     print("Connection closed by sender")
                     break
-                    
+
                 buffer += chunk
                 try:
                     pollutions = pickle.loads(buffer)
                     buffer = b""  # Clear buffer after successful unpickle
                     print(f"Data received: {pollutions[:5]}")
-                    
+
                     if hasattr(gui, "_server") and state_id_list:
                         invoke_callback(
                             gui,
@@ -167,6 +167,7 @@ def client_handler(gui: Gui, state_id_list: list):
         except Exception as e:
             print(f"Error in client_handler: {e}")
             continue
+
 
 # Gui declaration
 state_id_list = []

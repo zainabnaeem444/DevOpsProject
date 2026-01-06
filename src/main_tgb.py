@@ -69,7 +69,7 @@ def pollution(lat: float, long: float):
     Returns:
         - pollution level
     """
-    global countdown
+
     return 80 * (0.5 + 0.5 * math.sin(countdown / 20)) * math.exp(
         -(0.8 * (lat - factory_lat) ** 2 + 0.2 * (long - factory_long) ** 2) / 0.00005
     ) + np.random.randint(0, 50)
