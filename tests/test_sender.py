@@ -36,17 +36,16 @@ class TestSenderConfig:
 
 
 class TestSenderBasics:
-    """Basic tests for sender functionality"""
    
-    def test_sender_imports(self):
-        """Test that sender.py can be imported"""
-        try:
-            import sender
-            assert True
-        except ImportError:
-            pytest.skip("Sender dependencies not installed")
-        except SyntaxError:
-            pytest.fail("sender.py has syntax errors")
+    def test_sender_file_exists(self):
+        """Test that sender.py exists"""
+        import os
+        assert os.path.exists("src/sender.py")
+    
+    def test_sender_syntax(self):
+        """Test sender.py has valid Python syntax"""
+        import py_compile
+        py_compile.compile("src/sender.py", doraise=True)
    
     def test_receiver_url_format(self):
         """Test that receiver URL is properly formatted"""

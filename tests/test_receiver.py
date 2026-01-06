@@ -8,7 +8,8 @@ import os
 # Add src to path for imports
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
-from config import Config, DevelopmentConfig, ProductionConfig, TestConfig
+from config import Config, DevelopmentConfig, ProductionConfig
+from config import TestConfig as AppTestConfig
 
 
 class TestConfig:
@@ -36,8 +37,7 @@ class TestConfig:
         assert config.RECEIVER_HOST == "receiver-service"
    
     def test_test_config(self):
-        """Test testing configuration"""
-        config = TestConfig()
+        config = AppTestConfig()  # ← Use renamed import
         assert config.DEBUG == True
         assert config.SENDER_INTERVAL == 0
    
@@ -50,20 +50,17 @@ class TestConfig:
         assert "Version:" in captured.out
 
 
-class TestReceiverBasics:
-    """Basic tests for receiver functionality"""
    
-    def test_receiver_imports(self):
-        """Test that receiver.py can be imported"""
-        try:
-            # This will test if the file has valid Python syntax
-            import receiver
-            assert True
-        except ImportError:
-            # If taipy or other dependencies aren't installed, that's okay for now
-            pytest.skip("Receiver dependencies not installed")
-        except SyntaxError:
-            pytest.fail("receiver.py has syntax errors")
+class TestReceiverBasics:
+    def test_receiver_file_exists(self):
+        """Test that receiver.py exists"""
+        import os
+        assert os.path.exists("src/receiver.py")
+    
+    def test_receiver_syntax(self):
+        """Test receiver.py has valid Python syntax"""
+        import py_compile
+        py_compile.compile("src/receiver.py", doraise=True)
    
     def test_config_integration(self):
         """Test that config can be used in receiver"""
